@@ -49,11 +49,11 @@ namespace Refit
         /// Refit settings used to send the request.
         /// </summary>
         public RefitSettings Settings { get; }
-        
+
         public HttpResponseHeaders Headers => response.Headers;
-        
+
         public HttpContentHeaders? ContentHeaders => response.Content?.Headers;
-        
+
 #if NET5_0_OR_GREATER
         [MemberNotNullWhen(true, nameof(Content))]
         [MemberNotNullWhen(true, nameof(ContentHeaders))]
@@ -62,13 +62,13 @@ namespace Refit
         public bool IsSuccessStatusCode => response.IsSuccessStatusCode;
 
         public string? ReasonPhrase => response.ReasonPhrase;
-        
+
         public HttpRequestMessage? RequestMessage => response.RequestMessage;
-        
+
         public HttpStatusCode StatusCode => response.StatusCode;
-        
+
         public Version Version => response.Version;
-        
+
         public ApiException? Error { get; private set; }
 
 
@@ -86,7 +86,7 @@ namespace Refit
         {
             if (!IsSuccessStatusCode)
             {
-                var exception = await ApiException.Create(response.RequestMessage!, response.RequestMessage!.Method, response, Settings).ConfigureAwait(false);
+                var exception = Error ?? await ApiException.Create(response.RequestMessage!, response.RequestMessage!.Method, response, Settings).ConfigureAwait(false);
 
                 Dispose();
 

@@ -261,6 +261,7 @@ namespace Refit
                     if (typeof(T) != typeof(HttpResponseMessage))
                     {
                         e = await settings.ExceptionFactory(resp).ConfigureAwait(false);
+                        disposeResponse = false; // caller has to dispose
                     }
 
                     if (restMethod.IsApiResponse)
@@ -270,7 +271,7 @@ namespace Refit
                         try
                         {
                             // Only attempt to deserialize content if no error present for backward-compatibility
-                            body = e == null
+                            body = resp.IsSuccessStatusCode
                                 ? await DeserializeContentAsync<TBody>(resp, content, ct).ConfigureAwait(false)
                                 : default;
                         }
@@ -284,7 +285,6 @@ namespace Refit
                     }
                     else if (e != null)
                     {
-                        disposeResponse = false; // caller has to dispose
                         throw e;
                     }
                     else
